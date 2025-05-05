@@ -227,16 +227,8 @@ class Decoder(nn.Module):
         self.ln_pre = LayerNorm(width)
         self.transformer = Transformer(width, layers, heads)
         self.ln_post = LayerNorm(width)
-        #self.fc_out = nn.Linear(width, output_dim)
-        self.fc_out1 = nn.Linear(width, 520)
-        self.fc_out2 = nn.Linear(520, 528)
-        self.fc_out3 = nn.Linear(528, 536)
-        self.fc_out4 = nn.Linear(536, 544)
-        self.fc_out5 = nn.Linear(544, 552)
-        self.fc_out6 = nn.Linear(552, 560)
-        self.fc_out7 = nn.Linear(560, 568)
-        self.fc_out8 = nn.Linear(568, output_dim)
-        
+        self.fc_out = nn.Linear(width, output_dim)
+
         # compute in_ch_mult, block_in and curr_res at lowest res
         in_ch_mult = (1,)+ ch_mult
         block_in = ch*ch_mult[self.num_resolutions-1]
@@ -298,15 +290,7 @@ class Decoder(nn.Module):
         x = self.transformer(x)
         x = x.permute(1, 0, 2)
         x = self.ln_post(x)
-        x = self.fc_out1(x)
-        x = self.fc_out2(x)
-        x = self.fc_out3(x)
-        x = self.fc_out4(x)
-        x = self.fc_out5(x)
-        x = self.fc_out6(x)
-        x = self.fc_out7(x)
-        x = self.fc_out8(x)
-        #x = self.fc_out(x)
+        x = self.fc_out(x)
         x = x.view(x.shape[0], 3, 24, 8)
 
         # timestep embedding
